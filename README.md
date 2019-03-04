@@ -1,4 +1,10 @@
-# man-machine-system-graph
+# HCIDB
+
+Human Computer Interaction Database. Website to browse the common knowledge in HCI and man-machine systems.
+Content of the database is mostly in russian.
+
+Access the database: https://hci.shishov.me/ 
+
 
 > A Vue.js project
 
