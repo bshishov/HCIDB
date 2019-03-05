@@ -17,8 +17,8 @@ deploy:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - echo -e "Host *\n" > ~/.ssh/config
-    - echo -e "\tStrictHostKeyChecking no\n" > ~/.ssh/config
-    - echo -e "\tIdentityFile ~/.ssh/id_rsa\n" > ~/.ssh/config
-    - echo -e "\tUser $SSH_USER\n\n" > ~/.ssh/config
+    - echo -e "Host *" >> ~/.ssh/config
+    - echo -e "\tStrictHostKeyChecking no" >> ~/.ssh/config
+    - echo -e "\tIdentityFile ~/.ssh/id_rsa" >> ~/.ssh/config
+    - echo -e "\tUser $SSH_USER\n" >> ~/.ssh/config
     - "rsync -rav --delete dist/ $SSH_USER@$DEPLOY_HOST:$DEPLOY_PATH"
