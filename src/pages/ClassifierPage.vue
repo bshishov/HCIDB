@@ -6,6 +6,7 @@
     content: Content,
     description: Description (markdown)
     save: Save
+    features: Features
   ru:
     edit: Редактировать
     delete: Удалить
@@ -13,6 +14,7 @@
     content: Содержание
     description: Описание (markdown)
     save: Сохранить
+    features: Характеристики
 </i18n>
 
 <template>
@@ -23,7 +25,8 @@
         <div class="item control-button" @click="remove()"><Icon>delete</Icon> {{ $t('delete') }}</div>
       </div>
 
-      <h2>{{ type.name }}: {{ content }}</h2>
+      <h3>{{ type.name }}</h3>
+      <h1>{{ content }}</h1>
     </template>
     <div v-if="!isEditing">
       <div v-html="descriptionHtml"></div>
@@ -43,7 +46,8 @@
         </div>
       </div>
     </Block>
-    <FeaturesList :items="features"></FeaturesList>
+    <h3>{{ $t('features') }}</h3>
+    <FeaturesList :items="features" detailed></FeaturesList>
   </BaseLayout>
 </template>
 

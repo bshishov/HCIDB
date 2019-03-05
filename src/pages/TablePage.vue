@@ -21,13 +21,13 @@
           <div class="label">{{ $t('search-field') }}</div>
           <input type="text" :placeholder="$t('search-placeholder')" v-model="searchQuery">
         </div>
-        <FeaturesList :items="searchItems"></FeaturesList>
+        <FeaturesList :items="searchItems" detailed></FeaturesList>
         <div v-if="isSearchLoading">
           <i>{{ $t('loading' )}}</i>
         </div>
       </div>
       <div style="width:600px; height: 600px">
-        <Graph :features="searchItems"></Graph>
+        <Graph :features="searchItems" @nodeSelected="onNodeSelected"></Graph>
       </div>
     </div>
   </BaseLayout>
@@ -66,7 +66,12 @@
     },
     mounted() {
       this.isSearchLoading = true;
-      db.query('{features {id name affects {from_id to_id} depends {from_id to_id} }}').then(r => {
+      db.query(`{features {
+                id name
+                affects {from_id to_id}
+                depends {from_id to_id}
+                references { classifier { type_id content }}
+                }}`).then(r => {
         this.searchItems = r.features;
       }).catch(this.dbError)
         .finally(() => {
@@ -77,6 +82,9 @@
       ...mapActions({
         dbError: 'notifications/dbError'
       }),
+      onNodeSelected(node) {
+        this.$router.push({ name: 'FeaturePage', params: {id: node.id }});
+      }
     }
   }
 </script>

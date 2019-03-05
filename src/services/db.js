@@ -38,8 +38,8 @@ export default {
       query features_by_pk($id: Int) {
         features_by_pk(id: $id) {
           id name description
-          depends { from { id name }}
-          affects { to { id name }}
+          depends { from { id name references { classifier { type_id content }} }}
+          affects { to { id name references { classifier { type_id content }} }}
           references { classifier { id type { id name } content }}           
         }}`;
     return this.query(getFeatureQuery, {id: id}).then(r => {
@@ -55,7 +55,7 @@ export default {
           content
           description
           type { id name }          
-          references { feature { id name }}           
+          references { feature { id name references { classifier { type_id content }} }}           
         }}`;
     return this.query(getClassifierQuery, {id: id}).then(r => {
       return r.classifiers_by_pk;
@@ -104,6 +104,7 @@ export default {
           description
           affects { from_id to_id }
           depends { from_id to_id }
+          references { classifier { type_id content }}
         }}`;
     return this.query(featureNameSearch, {q: '%' + query + '%', limit});
   },

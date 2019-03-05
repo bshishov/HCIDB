@@ -1,22 +1,25 @@
 <i18n>
 en:
   title: HCI Systems Knowledge graph
-  list: List
+  features: Features
   graph: Graph
   debug: Debug
+  classifiers: Classifiers
 ru:
   title: HCI
-  list: Список
+  features: Характеристики
   graph: Граф
   debug: Отладка
+  classifiers: Классификаторы
 </i18n>
 
 <template>
   <div class="app">
     <div class="toolbar">
       <div class="item logo">{{ $t('title') }}</div>
-      <router-link class="item" :to="{ name: 'TablePage' }">{{ $t('list') }}</router-link>
+      <router-link class="item" :to="{ name: 'TablePage' }">{{ $t('features') }}</router-link>
       <router-link class="item" to="/graph">{{ $t('graph') }}</router-link>
+      <router-link class="item" :to="{ name: 'ClassifiersListPage' }">{{ $t('classifiers') }}</router-link>
       <router-link class="item" to="/debug">{{ $t('debug') }}</router-link>
       <div class="flex-grow"></div>
       <div class="item">

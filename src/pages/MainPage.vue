@@ -1,16 +1,14 @@
 <template>
   <BaseLayout>
-    <FeaturesTable></FeaturesTable>
   </BaseLayout>
 </template>
 
 <script>
-  import FeaturesTable from "@/components/FeaturesTable"
   import BaseLayout from "@/components/BaseLayout";
 
   export default {
     name: 'MainPage',
-    components: {BaseLayout, FeaturesTable},
+    components: {BaseLayout},
     data () {
       return { }
     },

@@ -1,21 +1,19 @@
 <template>
-  <div class="list">
-    <div class="item" v-for="(item, index) in items">
-      <router-link class="link horizontal-items" :to="{ name: 'FeaturePage', params: { id: item.id }}">
+  <div class="list" v-if="items">
+    <div class="item" v-for="(item, index) in items" :key="index">
+      <div class="link horizontal-items">
         <div class="content">
           <div class="header">
-            {{ item.name }}
+            <slot :item="item" :index="index">{{ item }}</slot>
           </div>
           <div class="subheader" v-if="detailed">
-            <span v-for="ref in item.references" v-if="showRef(ref)" class="classifier">
-              {{ ref.classifier.content }}
-            </span>
+            <slot name="sub" :item="item" :index="index"></slot>
           </div>
         </div>
         <div class="controls">
-          <div class="item" @click="remove(index, $event)" v-if="removable"><Icon>close</Icon></div>
+          <div class="item" @click="remove(item, index, $event)" v-if="removable"><Icon>close</Icon></div>
         </div>
-      </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -23,26 +21,18 @@
 <script>
   import Icon from "@/components/Icon";
   export default {
-    name: "FeaturesList",
+    name: "List",
     components: {Icon},
     props: {
       items: { type: Array },
       removable: { type: Boolean, default: false },
-      detailed: { type: Boolean, default: false }
+      detailed: { type: Boolean, default: false },
+      to: null
     },
     methods: {
       remove(idx) {
         if (event) event.preventDefault();
         this.$emit('remove', idx);
-      },
-      showRef(reference) {
-        if (!reference)
-          return false;
-
-        if (![1, 2].includes(reference.classifier.type_id))
-          return false;
-
-        return true;
       }
     }
   }
@@ -55,7 +45,7 @@
   & > .item
     width: 100%
     border-bottom: 1px solid #eee
-    padding: 5px 0px
+    padding: 5px 0
     cursor: pointer
     & > .link
       text-decoration: none
@@ -64,6 +54,7 @@
       background-color: lighten($primary-color, 10%)
       .controls
         display: inline-block
+        font-size: $small
     .controls
       display: none
     &:last-child
@@ -72,7 +63,4 @@
 .subheader
   font-size: $small
   color: #7a7a7a
-
-.classifier
-  margin-right: 10px
 </style>

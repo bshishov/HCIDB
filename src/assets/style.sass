@@ -1,7 +1,8 @@
 // Colors
-$primary-color: #7fcc6e
+$primary-color: #a0f18e
 $secondary-color: #ccc
 $toolbar-color: #333
+$small: 0.8em
 
 // Typography
 $font-stack: 'Roboto', sans-serif
@@ -16,6 +17,18 @@ html, body
   font-family: $font-stack
   font-size: $font-size
   line-height: 1.5
+
+a
+  color: black
+
+h1
+  margin-block-end: 0.2em
+
+h2
+  margin-block-end: 0.2em
+
+h3
+  margin-block-end: 0.2em
 
 .toolbar
   display: flex
@@ -139,7 +152,7 @@ textarea
   -ms-user-select: none
   user-select: none
   &:hover
-    background: #e3e3e3
+    background: $primary-color
 
 .float-right
   float: right

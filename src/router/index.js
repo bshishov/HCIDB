@@ -7,6 +7,7 @@ import FeaturePage from "@/pages/FeaturePage";
 import TablePage from "@/pages/TablePage";
 import DebugPage from "@/pages/DebugPage";
 import ClassifierPage from "@/pages/ClassifierPage";
+import ClassifiersListPage from "@/pages/ClassifiersListPage";
 
 Vue.use(Router);
 
@@ -15,33 +16,38 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'MainPage',
+      name: MainPage.name,
       component: MainPage
     },
     {
       path: '/graph',
-      name: 'GraphPage',
+      name: GraphPage.name,
       component: GraphPage
     },
     {
       path: '/list',
-      name: 'TablePage',
+      name: TablePage.name,
       component: TablePage
     },
     {
       path: '/auth_callback',
-      name: 'AuthCallback',
+      name: AuthCallback.name,
       component: AuthCallback
     },
     {
       path: '/features/:id',
-      name: 'FeaturePage',
+      name: FeaturePage.name,
       component: FeaturePage
     },
     {
       path: '/classifier/:id',
-      name: 'ClassifierPage',
+      name: ClassifierPage.name,
       component: ClassifierPage
+    },
+    {
+      path: '/classifiers',
+      name: ClassifiersListPage.name,
+      component: ClassifiersListPage
     },
     {
       path: '/debug',

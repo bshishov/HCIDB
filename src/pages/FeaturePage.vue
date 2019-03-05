@@ -9,6 +9,7 @@
     affects: Affects
     depends-on: Depends on
     editing: Editing
+    add-relation: Add relation
   ru:
     editing: Редактирование
     edit: Редактировать
@@ -19,6 +20,7 @@
     references: Мета-информация
     affects: Влияет на
     depends-on: Зависит от
+    add-relation: Добавить связь
 </i18n>
 
 <template>
@@ -62,9 +64,13 @@
         <FeaturesList
           :items="affects"
           @remove="onAffectsLinkRemoved"
-          :removable="canEdit">
+          :removable="canEdit"
+          detailed>
         </FeaturesList>
-        <Block class="white" v-if="canEdit">
+        <div class="control-button" v-if="canEdit" @click="addingAffects = !addingAffects">
+          <Icon>edit</Icon> {{ $t('add-relation') }}
+        </div>
+        <Block class="white" v-if="canEdit && addingAffects">
           <RelationAddForm @submit="addAffects" auto-create-custom />
         </Block>
       </div>
@@ -74,9 +80,13 @@
         <FeaturesList
           :items="depends"
           @remove="onDependsLinkRemoved"
-          :removable="canEdit">
+          :removable="canEdit"
+          detailed>
         </FeaturesList>
-        <Block class="white" v-if="canEdit">
+        <div class="control-button" v-if="canEdit" @click="addingDepends = !addingDepends">
+          <Icon>edit</Icon> {{ $t('add-relation') }}
+        </div>
+        <Block class="white" v-if="canEdit && addingDepends">
           <RelationAddForm @submit="addDependency" auto-create-custom />
         </Block>
       </div>
@@ -111,7 +121,9 @@
         description: "",
         affects: [],
         depends: [],
-        classifiers: []
+        classifiers: [],
+        addingAffects: false,
+        addingDepends: false,
       }
     },
     watch: {

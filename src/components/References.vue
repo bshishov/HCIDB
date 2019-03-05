@@ -9,19 +9,18 @@ ru:
   <div class="references">
     <div class="classifiers" v-for="(group, key) in groupedItems" :key="key">
       <Block :caption="group.name" class="white">
-        <div class="item" v-for="item in group.items" :key="item.key">
-          <router-link class="link" :to="{ name: 'ClassifierPage', params: { id: item.id }}">
-            {{ item.content }}
-          </router-link>
-          <div class="controls">
-            <span @click="onItemRemove(item)" class="edit">
-              <Icon icon="close" v-if="editable && canEdit" />
-            </span>
-          </div>
-        </div>
+        <List :items="group.items"
+              :removable="editable && canEdit"
+              @remove="onItemRemove">
+          <template v-slot:default="{ item }">
+            <router-link :to="{ name: 'ClassifierPage', params: { id: item.id }}">
+              {{ item.content }}
+            </router-link>
+          </template>
+        </List>
       </Block>
     </div>
-    <div v-if="editable && canEdit">
+    <div v-if="editable && canEdit" style="margin-top: 0.8em">
       <div @click="isAdding = !isAdding" class="control-button"><Icon icon="edit" /> {{ $t('add') }}</div>
       <Block class="white" v-if="isAdding">
         <ClassifierAddForm
@@ -40,10 +39,11 @@ ru:
   import {mapActions, mapGetters} from 'vuex';
   import ClassifierPage from "@/pages/ClassifierPage";
   import Block from "@/components/Block";
+  import List from "@/components/List";
 
   export default {
     name: "References",
-    components: {Block, ClassifierAddForm, Icon},
+    components: {List, Block, ClassifierAddForm, Icon},
     props: {
       items: Array,
       editable: { type: Boolean, default: false }
@@ -59,11 +59,11 @@ ru:
     },
     watch: {
       items: function (val) {
-        this.groupedItems = this.group(val);
+        this.groupedItems = this.groupClassifiers(val);
       }
     },
     methods: {
-      group(items){
+      groupClassifiers(items){
         let grouped = {};
         items.forEach(i => {
           if(i.type.id in grouped) {
@@ -112,30 +112,5 @@ ru:
   .classifiers {
     display: flex;
     flex-flow: row wrap;
-  }
-  .item > .link {
-    text-decoration: none;
-    color: inherit;
-  }
-  .item {
-    padding: 1px 6px;
-    /*margin-bottom: 10px;*/
-    margin-right: 10px;
-  }
-  .item:last-child {
-    margin-right: 0;
-  }
-  .item .controls {
-    display: none;
-    width: 0;
-    cursor: pointer;
-  }
-  .item:hover {
-    box-shadow: 0px 0px 2px rgba(0, 1, 1, 0.3);
-  }
-  .item:hover .controls {
-    display: inline-block;
-    width: auto;
-    font-size: 0.8em;
   }
 </style>
