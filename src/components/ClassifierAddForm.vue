@@ -23,7 +23,7 @@ ru:
     <div class="field">
       <div class="label">{{ $t('content')}}</div>
       <Dropdown
-        allow-custom-input
+        :allow-custom-input="!permitCustom"
         v-model="content"
         :items="searchedClassifiers"
         item-string-key="content"
@@ -46,6 +46,10 @@ ru:
   export default {
     name: "ClassifierAddForm",
     components: {Dropdown},
+    props: {
+      permitCustom: { type: Boolean, default: false },
+      autoCreateCustom: { type: Boolean, default: false }
+    },
     data() {
      return {
        types: [],

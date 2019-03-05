@@ -1,39 +1,37 @@
 <template>
-  <div class="list">
-    <div class="item" v-for="(item, index) in items">
+  <List
+    :items="items"
+    :detailed="detailed"
+    :removable="removable"
+    @remove="remove">
+    <template slot-scope="{ item }">
       <router-link class="link horizontal-items" :to="{ name: 'FeaturePage', params: { id: item.id }}">
-        <div class="content">
-          <div class="header">
-            {{ item.name }}
-          </div>
-          <div class="subheader" v-if="detailed">
-            <span v-for="ref in item.references" v-if="showRef(ref)" class="classifier">
-              {{ ref.classifier.content }}
-            </span>
-          </div>
-        </div>
-        <div class="controls">
-          <div class="item" @click="remove(index, $event)" v-if="removable"><Icon>close</Icon></div>
-        </div>
+        {{ item.name }}
       </router-link>
-    </div>
-  </div>
+    </template>
+    <template slot="sub" slot-scope="{ item }">
+      <span v-for="ref in item.references" v-if="showRef(ref)" class="classifier">
+        {{ ref.classifier.content }}
+      </span>
+    </template>
+  </List>
 </template>
 
 <script>
   import Icon from "@/components/Icon";
+  import List from "@/components/List";
   export default {
     name: "FeaturesList",
-    components: {Icon},
+    components: {List, Icon},
     props: {
       items: { type: Array },
       removable: { type: Boolean, default: false },
       detailed: { type: Boolean, default: false }
     },
     methods: {
-      remove(idx) {
+      remove(item, index, event) {
         if (event) event.preventDefault();
-        this.$emit('remove', idx);
+        this.$emit('remove', item, index, event);
       },
       showRef(reference) {
         if (!reference)

@@ -30,9 +30,9 @@
       to: null
     },
     methods: {
-      remove(idx) {
+      remove(item, index, event) {
         if (event) event.preventDefault();
-        this.$emit('remove', idx);
+        this.$emit('remove', item, index, event);
       }
     }
   }

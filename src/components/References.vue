@@ -87,8 +87,8 @@ ru:
           this.$emit('add', value.content);
         }
       },
-      onItemRemove(item) {
-        this.$emit('remove', item);
+      onItemRemove(item, index, event) {
+        this.$emit('remove', item, index, event);
       },
       ...mapActions({
         dbError: 'notifications/dbError',

@@ -1,5 +1,6 @@
 <i18n>
   en:
+    add: Add
     edit: Edit
     delete: Delete
     editing: Editing
@@ -8,6 +9,7 @@
     save: Save
     features: Features
   ru:
+    add: Добавить
     edit: Редактировать
     delete: Удалить
     editing: Редактирование
@@ -47,7 +49,13 @@
       </div>
     </Block>
     <h3>{{ $t('features') }}</h3>
-    <FeaturesList :items="features" detailed></FeaturesList>
+    <FeaturesList :items="features" detailed removable @remove="onFeatureRemove"></FeaturesList>
+    <div v-if="canEdit" style="max-width: 500px;">
+      <div class="control-button" @click="adding = !adding"><Icon>edit</Icon> {{ $t('add') }}</div>
+      <Block class="white" v-if="adding">
+        <RelationAddForm @submit="addFeature" auto-create-custom/>
+      </Block>
+    </div>
   </BaseLayout>
 </template>
 
@@ -60,10 +68,11 @@
   import Icon from "@/components/Icon";
   import marked from 'marked';
   import {debounce} from "@/utils";
+  import RelationAddForm from "@/components/RelationAddForm";
 
   export default {
     name: "ClassifierPage",
-    components: {Icon, Block, FeaturesList, BaseLayout},
+    components: {RelationAddForm, Icon, Block, FeaturesList, BaseLayout},
     data() {
       return {
         id: -1,
@@ -72,7 +81,8 @@
         description: null,
         descriptionHtml: null,
         features: [],
-        isEditing: false
+        isEditing: false,
+        adding: false
       }
     },
     watch: {
@@ -124,6 +134,24 @@
             time: 1000
           })
         }).catch(this.dbError);
+      },
+      onFeatureRemove(item, index) {
+        let itemToRemove = this.features.splice(index, 1)[0];
+        console.log(itemToRemove);
+        db.deleteReference(itemToRemove.id, this.id)
+          .then(r => {
+            this.notify({
+              type: 'success',
+              header: 'Relation deleted',
+              time: 1000
+            });
+          })
+          .catch(this.dbError);
+      },
+      addFeature(feature) {
+        db.addReference(feature.id, this.id)
+          .then(r => { this.features.push(feature); })
+          .catch(this.dbError);
       },
       ...mapActions({
         dbError: 'notifications/dbError',

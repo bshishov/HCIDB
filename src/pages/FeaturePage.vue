@@ -171,8 +171,8 @@
           this.savingInProgress = false;
         })
       },
-      onAffectsLinkRemoved(id) {
-        let itemToRemove = this.affects.splice(id, 1)[0];
+      onAffectsLinkRemoved(item, index) {
+        let itemToRemove = this.affects.splice(index, 1)[0];
         db.deleteRelation(this.id, itemToRemove.id, ).then(r => {
           this.notify({
             type: 'success',
@@ -181,9 +181,9 @@
           });
         }).catch(this.dbError);
       },
-      onDependsLinkRemoved(id) {
-        console.log('removed', id);
-        let itemToRemove = this.depends.splice(id, 1)[0];
+      onDependsLinkRemoved(item, index) {
+        console.log('removed', index);
+        let itemToRemove = this.depends.splice(index, 1)[0];
         db.deleteRelation(itemToRemove.id, this.id).then(r => {
           this.nofity({
             type: 'success',
