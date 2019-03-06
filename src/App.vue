@@ -5,12 +5,14 @@ en:
   graph: Graph
   debug: Debug
   classifiers: Classifiers
+  search: Search...
 ru:
   title: HCI
   features: Характеристики
   graph: Граф
   debug: Отладка
   classifiers: Классификаторы
+  search: Поиск...
 </i18n>
 
 <template>
@@ -20,7 +22,28 @@ ru:
       <router-link class="item" :to="{ name: 'TablePage' }">{{ $t('features') }}</router-link>
       <router-link class="item" to="/graph">{{ $t('graph') }}</router-link>
       <router-link class="item" :to="{ name: 'ClassifiersListPage' }">{{ $t('classifiers') }}</router-link>
-      <router-link class="item" to="/debug">{{ $t('debug') }}</router-link>
+      <!--<router-link class="item" to="/debug">{{ $t('debug') }}</router-link>-->
+      <div class="item searchbar">
+        <Dropdown ref="search"
+                  :placeholder="$t('search')"
+                  :items="searchItems"
+                  v-model="searchQuery"
+                  itemStringKey="name"
+                  class="dropdown"
+                  @input="onSearchInput"
+                  allow-custom-input>
+          <template slot="item" slot-scope="{ item }">
+            <router-link class="link" :to="{ name: 'FeaturePage', params: { id: item.id }}">
+              {{ item.name }}
+            </router-link>
+            <div class="small subheader">
+              <span v-for="ref in item.references" v-if="showRef(ref)" class="classifier">
+                {{ ref.classifier.content }}
+              </span>
+            </div>
+          </template>
+        </Dropdown>
+      </div>
       <div class="flex-grow"></div>
       <div class="item">
         <AuthPanel></AuthPanel>
@@ -34,23 +57,84 @@ ru:
 <script>
   import AuthPanel from './components/AuthPanel';
   import NotificationsContainer from "@/components/NotificationsContainer";
+  import Dropdown from "@/components/Dropdown";
+  import db from '@/services/db';
+  import { mapActions, mapGetters } from 'vuex';
+  import {debounce} from "@/utils";
 
   export default {
     name: 'App',
-    components: {NotificationsContainer, AuthPanel },
+    components: {Dropdown, NotificationsContainer, AuthPanel },
     data: () => ({
-      leftPanel: null,
-      rightPanel: false,
+      searchQuery: null,
+      isSearchLoading: false,
+      searchItems: []
     }),
+    watch: {
+      searchQuery: debounce(function (newQuery) {
+        if (!newQuery)
+          return;
+
+        if(!(typeof newQuery === 'string' || newQuery instanceof String))
+          return;
+
+        if (newQuery.length < 2)
+          return;
+
+        console.log('Search changed', newQuery);
+        this.isSearchLoading = true;
+        db.searchFeatures(newQuery)
+          .then(r => { this.searchItems = r.features; })
+          .catch(this.dbError)
+          .finally(() => { this.isSearchLoading = false; });
+      }, 300)
+    },
     props: {
       source: String
+    },
+    methods: {
+      ...mapActions({
+        dbError: 'notifications/dbError'
+      }),
+      onNodeSelected(node) {
+        this.$router.push({ name: 'FeaturePage', params: {id: node.id }});
+      },
+      onSearchInput(value) {
+        if(!(typeof value === 'string' || value instanceof String))
+          this.$refs.search.clear();
+      },
+      showRef(reference) {
+        if (!reference)
+          return false;
+
+        if (![1, 2].includes(reference.classifier.type_id))
+          return false;
+
+        return true;
+      }
     }
   }
 </script>
 
-<style>
+<style scoped lang="sass">
+@import "assets/style.sass"
+.searchbar
+  color: black
+  max-width: 400px
+  flex-grow: 2
+  min-width: 200px
 
+.link
+  margin-top: 0.5em
+  color: black !important
+
+.subheader
+  font-size: $small
+  color: #7a7a7a
+  margin-bottom: 0.5em
+  border-bottom: 1px solid #eee
 </style>
+
 
 <style lang="sass">
   @import "assets/style.sass"
