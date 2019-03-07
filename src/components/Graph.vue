@@ -68,7 +68,7 @@
 
       this.simulation = d3.forceSimulation().nodes([]);
       this.simulation
-        .force("chargeForce",  d3.forceManyBody().strength(-200))
+        .force("chargeForce",  d3.forceManyBody().strength(-500))
         .force("links", d3.forceLink([]).id(d => { return d.id; }).distance(100))
         .force("centerForce", d3.forceCenter(boundingClientRect.width / 2, boundingClientRect.height / 2))
         .force("collisionForce", d3.forceCollide(90).strength(0.3));
