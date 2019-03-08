@@ -66,7 +66,6 @@
   import {mapActions, mapGetters} from 'vuex';
   import Block from "@/components/Block";
   import Icon from "@/components/Icon";
-  import marked from 'marked';
   import {debounce} from "@/utils";
   import RelationAddForm from "@/components/RelationAddForm";
 
@@ -88,7 +87,7 @@
     watch: {
       description: debounce(function(newVal) {
         if (newVal) {
-          this.descriptionHtml = marked(newVal, {sanitize: true});
+          this.descriptionHtml = this.$marked(newVal);
         }
         else {
          this.descriptionHtml = null;
@@ -112,7 +111,7 @@
           this.features = r.references.map(el => el.feature);
           this.description = r.description;
           if(r.description)
-            this.descriptionHtml = marked(r.description);
+            this.descriptionHtml = this.$marked(r.description);
         }).catch(this.dbError);
       },
       remove() {

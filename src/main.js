@@ -5,8 +5,12 @@ import App from './App'
 import router from './router'
 import store from './store/index'
 import VueI18n from 'vue-i18n'
+import {markedTex} from "@/utils";
+import 'katex/dist/katex.min.css'
+
 
 Vue.use(VueI18n);
+Vue.prototype.$marked = markedTex;
 
 const i18n = new VueI18n({
   locale: 'ru'

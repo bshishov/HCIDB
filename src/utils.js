@@ -1,3 +1,6 @@
+import marked from "marked-katex";
+import katex from "katex";
+
 export function debounce(func, wait) {
   let timeout;
   return function(...args) {
@@ -59,4 +62,22 @@ export function pointOnRect(x, y, minX, minY, maxX, maxY, validate) {
   // Should never happen :) If it does, please tell me!
   throw "Cannot find intersection for " + [x,y]
   + " inside rectangle " + [minX, minY] + " - " + [maxX, maxY] + ".";
+}
+
+export function htmlDecode(input){
+  let e = document.createElement('div');
+  e.innerHTML = input;
+  return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+}
+
+export function markedTex(markdownText, mdOptions={}, texOptions={}) {
+  let html = marked(markdownText, ...mdOptions);
+  html = html.replace(/<code>\s*\$\$([^\$]*)\$\$\s*<\/code>/gi, function (match, tex) {
+    return katex.renderToString(htmlDecode(tex), { display: true, ...texOptions });
+  });
+  html = html.replace(/<code>\s*\$([^\$]*)\$?\$\s*<\/code>/gi, function (match, tex) {
+    return katex.renderToString(htmlDecode(tex), { display: false, ...texOptions });
+  });
+
+  return html;
 }

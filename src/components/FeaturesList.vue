@@ -37,7 +37,7 @@
         if (!reference)
           return false;
 
-        if (![1, 2].includes(reference.classifier.type_id))
+        if (![1, 2, 5].includes(reference.classifier.type_id))
           return false;
 
         return true;

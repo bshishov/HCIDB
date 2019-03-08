@@ -103,7 +103,6 @@
   import FeaturesList from "@/components/FeaturesList";
   import References from "@/components/References";
   import RelationAddForm from "@/components/RelationAddForm";
-  import marked from 'marked';
   import Block from "@/components/Block";
   import {debounce} from "@/utils";
   import Icon from "@/components/Icon";
@@ -128,7 +127,7 @@
     },
     watch: {
       description: debounce(function(newVal) {
-        this.descriptionHtml = marked(newVal, { sanitize: true });
+        this.descriptionHtml = this.$marked(newVal);
       }, 300)
     },
     mounted() {
@@ -144,7 +143,7 @@
           this.id = item.id;
           this.name = item.name;
           this.description = item.description;
-          this.descriptionHtml = marked(item.description);
+          this.descriptionHtml = this.$marked(item.description);
           this.affects = item.affects.map(el => el.to);
           this.depends = item.depends.map(el => el.from);
           this.classifiers = item.references.map(el => el.classifier);
