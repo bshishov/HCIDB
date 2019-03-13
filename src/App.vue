@@ -51,6 +51,7 @@ ru:
     </div>
     <router-view />
     <NotificationsContainer></NotificationsContainer>
+    <FeatureTooltip></FeatureTooltip>
   </div>
 </template>
 
@@ -61,10 +62,11 @@ ru:
   import db from '@/services/db';
   import { mapActions, mapGetters } from 'vuex';
   import {debounce} from "@/utils";
+  import FeatureTooltip from "@/components/FeatureTooltip";
 
   export default {
     name: 'App',
-    components: {Dropdown, NotificationsContainer, AuthPanel },
+    components: {FeatureTooltip, Dropdown, NotificationsContainer, AuthPanel },
     data: () => ({
       searchQuery: null,
       isSearchLoading: false,

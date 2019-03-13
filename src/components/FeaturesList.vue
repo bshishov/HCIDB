@@ -5,7 +5,11 @@
     :removable="removable"
     @remove="remove">
     <template slot-scope="{ item }">
-      <router-link class="link horizontal-items" :to="{ name: 'FeaturePage', params: { id: item.id }}">
+      <router-link
+        @mouseover.native="tooltipShowFeature(item.id)"
+        @mouseleave.native="tooltipHideFeature"
+        class="link horizontal-items"
+        :to="{ name: 'FeaturePage', params: { id: item.id }}">
         {{ item.name }}
       </router-link>
     </template>
@@ -20,6 +24,7 @@
 <script>
   import Icon from "@/components/Icon";
   import List from "@/components/List";
+  import { mapActions, mapGetters } from 'vuex'
   export default {
     name: "FeaturesList",
     components: {List, Icon},
@@ -41,7 +46,11 @@
           return false;
 
         return true;
-      }
+      },
+      ...mapActions({
+        tooltipShowFeature: 'tooltip/showFeature',
+        tooltipHideFeature: 'tooltip/hideFeature'
+      })
     }
   }
 </script>

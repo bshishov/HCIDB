@@ -5,10 +5,12 @@ Vue.use(Vuex);
 
 import session from './session'
 import notifications from './notifications'
+import tooltip from './tooltip'
 
 export default new Vuex.Store({
   modules: {
-    session: session,
-    notifications: notifications
+    session,
+    notifications,
+    tooltip
   }
 });
