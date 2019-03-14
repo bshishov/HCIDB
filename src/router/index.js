@@ -8,6 +8,7 @@ import TablePage from "@/pages/TablePage";
 import DebugPage from "@/pages/DebugPage";
 import ClassifierPage from "@/pages/ClassifierPage";
 import ClassifiersListPage from "@/pages/ClassifiersListPage";
+import AnalyticsPage from "@/pages/AnalyticsPage";
 
 Vue.use(Router);
 
@@ -53,6 +54,11 @@ export default new Router({
       path: '/debug',
       name: 'DebugPage',
       component: DebugPage
+    },
+    {
+      path: '/analytics',
+      name: AnalyticsPage.name,
+      component: AnalyticsPage
     },
   ]
 })

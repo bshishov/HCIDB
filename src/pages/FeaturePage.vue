@@ -234,7 +234,6 @@
         dbError: 'notifications/dbError',
         notify: 'notifications/add',
       })
-
     },
     computed: {
       ...mapGetters({

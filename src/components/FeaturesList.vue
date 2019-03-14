@@ -5,13 +5,7 @@
     :removable="removable"
     @remove="remove">
     <template slot-scope="{ item }">
-      <router-link
-        @mouseover.native="tooltipShowFeature(item.id)"
-        @mouseleave.native="tooltipHideFeature"
-        class="link horizontal-items"
-        :to="{ name: 'FeaturePage', params: { id: item.id }}">
-        {{ item.name }}
-      </router-link>
+      <FeatureLink :feature="item" class="link horizontal-items" />
     </template>
     <template slot="sub" slot-scope="{ item }">
       <span v-for="ref in item.references" v-if="showRef(ref)" class="classifier">
@@ -25,9 +19,10 @@
   import Icon from "@/components/Icon";
   import List from "@/components/List";
   import { mapActions, mapGetters } from 'vuex'
+  import FeatureLink from "@/components/FeatureLink";
   export default {
     name: "FeaturesList",
-    components: {List, Icon},
+    components: {FeatureLink, List, Icon},
     props: {
       items: { type: Array },
       removable: { type: Boolean, default: false },

@@ -20,7 +20,6 @@ export function clamp(val, minVal, maxVal) {
   return val;
 }
 
-
 export function pointOnRect(x, y, minX, minY, maxX, maxY, validate) {
   //assert minX <= maxX;
   //assert minY <= maxY;

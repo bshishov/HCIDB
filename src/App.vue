@@ -6,6 +6,7 @@ en:
   debug: Debug
   classifiers: Classifiers
   search: Search...
+  analytics: Analytics
 ru:
   title: HCI
   features: Характеристики
@@ -13,6 +14,7 @@ ru:
   debug: Отладка
   classifiers: Классификаторы
   search: Поиск...
+  analytics: Аналитика
 </i18n>
 
 <template>
@@ -22,6 +24,7 @@ ru:
       <router-link class="item" :to="{ name: 'TablePage' }">{{ $t('features') }}</router-link>
       <router-link class="item" to="/graph">{{ $t('graph') }}</router-link>
       <router-link class="item" :to="{ name: 'ClassifiersListPage' }">{{ $t('classifiers') }}</router-link>
+      <router-link class="item" :to="{ name: 'AnalyticsPage' }">{{ $t('analytics') }}</router-link>
       <!--<router-link class="item" to="/debug">{{ $t('debug') }}</router-link>-->
       <div class="item searchbar">
         <Dropdown ref="search"

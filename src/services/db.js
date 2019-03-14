@@ -63,9 +63,9 @@ export default {
   },
   getClassifierTypes() {
     console.log('[DB] Loading classifier types');
-    const getClassifierTypesQuery = `{classifier_types {id name}}`;
+    const getClassifierTypesQuery = `{classifier_types {id name required}}`;
     return this.query(getClassifierTypesQuery).then(r => {
-      return r.classifier_types;
+      return r['classifier_types'];
     })
   },
   updateFeature(id, changes) {
