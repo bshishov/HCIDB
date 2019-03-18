@@ -1,7 +1,7 @@
 <template>
   <router-link
     @mouseover.native="tooltipShowFeature(feature.id)"
-    @mouseleave.native="tooltipHideFeature"
+    @mouseout.native="tooltipHideFeature"
     @mousedown.native="tooltipHideFeature"
     :to="{ name: 'FeaturePage', params: { id: feature.id }}">
     <slot>{{ feature.name }}</slot>

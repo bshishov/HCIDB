@@ -5,10 +5,12 @@ const SET_FEATURE = 'SET_FEATURE';
 const UNSET_FEATURE = 'UNSET_FEATURE';
 const LOADING_STARTED = 'LOADING_STARTED';
 const LOADING_ENDED = 'LOADING_ENDED';
+const SHOW = 'SHOW';
 
 const state = {
   isLoading: false,
   isShowing: false,
+  hideRequested: false,
   feature: {
     id: -1,
     name: "",
@@ -36,22 +38,37 @@ const mutations = {
   },
   [LOADING_ENDED](state) {
     state.isLoading = false;
+
+    if(state.hideRequested) {
+      state.isShowing = false;
+      state.hideRequested = false;
+    }
   },
   [SET_FEATURE](state, feature) {
     state.isShowing = true;
     state.feature.name = feature.name;
     state.description = feature.description;
+    state.feature.id = feature.id;
     state.feature.classifiers = feature.references.map(el => el.classifier);
   },
+  [SHOW](state) {
+    state.isShowing = true;
+  },
   [UNSET_FEATURE](state) {
-    state.isShowing = false;
+    if(state.isLoading) {
+      state.hideRequested = true;
+    } else {
+      state.isShowing = false;
+    }
   }
 };
 
 const actions = {
   showFeature({commit, state}, featureId) {
-    if(state.feature.id === featureId)
+    if(state.feature.id === featureId) {
+      commit(SHOW);
       return;
+    }
 
     commit(LOADING_STARTED);
     db.getFeature(featureId).then(feature => {
