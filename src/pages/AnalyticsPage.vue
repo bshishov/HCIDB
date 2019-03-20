@@ -8,6 +8,8 @@
     without-classifiers: Features without classifier
     without-relations: Features without relations
     with-bypass-relations: Features with bypass relations
+    cycles: Cycle dependencies
+    cycle: Cycle
   ru:
     analytics: Аналитика
     completeness: Полнота
@@ -17,6 +19,8 @@
     without-classifiers: Характеристики без классификатора
     without-relations: Характеристики без связей
     with-bypass-relations: Характеристики с «проходной» связью
+    cycles: Циклические зависимости
+    cycle: Цикл
 </i18n>
 
 <template>
@@ -59,7 +63,11 @@
       <template slot="header">
         <h3>{{ $t('cycles') }} </h3>
       </template>
-      <FeaturesList :items="cycles"></FeaturesList>
+      <div v-for="(cycle, i) in cycles">
+        <h4>{{ $t('cycle')}} {{ i }}</h4>
+        <FeaturesList :items="cycle"></FeaturesList>
+      </div>
+
     </ToggleGroup>
 
     <h2>{{ $t('connectivity') }}</h2>
@@ -69,6 +77,7 @@
 <script>
   import BaseLayout from "@/components/BaseLayout";
   import db from '../services/db';
+  import {Feature} from "@/services/model";
   import {mapActions, mapGetters} from 'vuex';
   import FeaturesList from "@/components/FeaturesList";
   import Icon from "@/components/Icon";
@@ -147,12 +156,9 @@
         });
       },
       cycles() {
-        let graph = new Graph();
+        let graph = new Graph({});
         graph.fromFeatures(this.features);
-        console.log(graph);
-        console.log('strongly-connected', graph.stronglyConnectedComponents());
-        console.log('cycles', graph.findCycles());
-        return [];
+        return graph.findCycles();
       },
       ...mapGetters({
         canEdit: 'session/canEdit'

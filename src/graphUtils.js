@@ -1,184 +1,193 @@
-function Graph() {
-  this.nodes = [];
-  this.edges = new Map();
-}
+class Graph {
+  constructor(params = {}) {
+    this.nodeKey = params.nodeKey || 'id';
+    this.sourceNodeKey = params.sourceNodeKey || 'source';
+    this.targetNodeKey = params.targetNodeKey || 'target';
+    this.nodes = params.nodes || new Map();
+    this.edges = params.edges || new Map();
+  }
 
-Graph.prototype.fromFeatures = function(features) {
-  this.nodes = features;
+  getNode(id) {
+    return this.nodes.get(id);
+  }
 
-  let nodeIds = features.map(f => { return f.id; });
-  let usedLinks = [];
-  let edges = new Map();
-  let addRelation = function(relation) {
-    let id = relation.from_id + '-' + relation.to_id;
-    if (usedLinks.includes(id))
-      return;
+  fromFeatures(features) {
+    let nodeIds = features.map(f => { return f.id; });
+    let usedLinks = [];
+    let edges = new Map();
+    let addRelation = function(relation) {
+      let id = relation.from_id + '-' + relation.to_id;
+      if (usedLinks.includes(id))
+        return;
 
-    if(!nodeIds.includes(relation.from_id)) {
-      console.log('Missing', relation.from_id);
-      return;
-    }
+      if(!nodeIds.includes(relation.from_id)) {
+        console.log('Missing', relation.from_id);
+        return;
+      }
 
-    if(!nodeIds.includes(relation.to_id))
-      return;
+      if(!nodeIds.includes(relation.to_id))
+        return;
 
-    if(edges.has(relation.from_id))
-      edges.get(relation.from_id).push(relation.to_id);
-    else
-      edges.set(relation.from_id, [relation.to_id]);
+      let edge = {
+        source: relation.from_id,
+        target: relation.to_id
+      };
 
-    usedLinks.push(id);
-  };
+      if(edges.has(relation.from_id))
+        edges.get(relation.from_id).push(edge);
+      else
+        edges.set(relation.from_id, [edge]);
 
-  features.forEach(feature => {
-    feature.affects.forEach(addRelation);
-    feature.depends.forEach(addRelation);
-    if(!edges.has(feature.id))
-      edges.set(feature.id, []);
-  });
-
-  this.nodes = nodeIds;
-  this.edges = edges;
-};
-
-// Tarjan's strongly connected components algorithm
-Graph.prototype.stronglyConnectedComponents = function() {
-  var index = 0;
-  var stack = [];
-  var result = [];
-  var meta = new Map();
-
-  var graph = this;
-
-  var connect = function connect(node) {
-    var entry = {
-      onStack: true,
-      index: index,
-      lowLink: index
+      usedLinks.push(id);
     };
 
-    meta.set(node, entry);
-    stack.push(node);
-    index += 1;
-
-    graph.edges.get(node).forEach(function(adj) {
-      if (!meta.has(adj)) {
-        // adjacent node has not yet been visited, do it
-        connect(adj);
-        entry.lowLink = Math.min(entry.lowLink, meta.get(adj).lowLink);
-      } else if (meta.get(adj).onStack) {
-        entry.lowLink = Math.min(entry.lowLink, meta.get(adj).index);
-      }
+    features.forEach(feature => {
+      this.nodes.set(feature.id, feature);
+      feature.affects.forEach(addRelation);
+      feature.depends.forEach(addRelation);
+      if(!edges.has(feature.id))
+        edges.set(feature.id, []);
     });
 
-    // check if node is a root node, pop the stack and generated an SCC
-    if (entry.lowLink === entry.index) {
-      var scc = [];
-      var adj = null;
-
-      do {
-        adj = stack.pop();
-        meta.get(adj).onStack = false;
-        scc.push(adj);
-      } while (node !== adj);
-
-      result.push(scc);
-    }
+    this.edges = edges;
   };
 
-  graph.nodes.forEach(function(node) {
-    if (!meta.has(node)) {
-      connect(node);
-    }
-  });
+  // Tarjan's strongly connected components algorithm
+  stronglyConnectedComponents() {
+    let index = 0;
+    let stack = [];
+    let result = [];
+    let meta = new Map();
 
-  return result;
-};
+    let connect = function(node) {
+      let nodeId = node[this.nodeKey];
+      let entry = {
+        onStack: true,
+        index: index,
+        lowLink: index
+      };
 
-// Based on Donald B. Johnson 1975 paper
-// Finding all the elementary circuits of a directed graph
-Graph.prototype.findCycles = function() {
-  var startNode;
-  var stack = [];
-  var circuits = [];
-  var blocked = new Map();
+      meta.set(nodeId, entry);
+      stack.push(nodeId);
+      index += 1;
 
-  // book keeping to prevent Tarjan's algorithm fruitless searches
-  var b = new Map();
-
-  var graph = this;
-
-  function addCircuit(start, stack) {
-    var orders = [start.order].concat(
-      stack.map(function(n) {
-        return n.order;
-      })
-    );
-
-    // prevent duplicated cycles
-    // TODO: figure out why this is needed, this is most likely related to
-    // startNode being the "least" vertex in Vk
-    if (Math.min.apply(null, orders) !== start.order) {
-      circuits.push([].concat(stack).concat(start));
-    }
-  }
-
-  function unblock(u) {
-    blocked.set(u, false);
-
-    if (b.has(u)) {
-      b.get(u).forEach(function(w) {
-        b.get(u).delete(w);
-        if (blocked.get(w)) {
-          unblock(w);
+      this.edges.get(nodeId).forEach(edge => {
+        let adjacentNodeId = edge[this.targetNodeKey];
+        if (!meta.has(adjacentNodeId)) {
+          // adjacent node has not yet been visited, do it
+          connect(this.nodes.get(adjacentNodeId));
+          entry.lowLink = Math.min(entry.lowLink, meta.get(adjacentNodeId).lowLink);
+        } else if (meta.get(adjacentNodeId).onStack) {
+          entry.lowLink = Math.min(entry.lowLink, meta.get(adjacentNodeId).index);
         }
       });
-    }
-  }
 
-  function circuit(node) {
-    var found = false;
+      // check if node is a root node, pop the stack and generated an SCC
+      if (entry.lowLink === entry.index) {
+        let scc = [];
+        let adjacentNodeId = null;
 
-    stack.push(node);
-    blocked.set(node, true);
+        do {
+          adjacentNodeId = stack.pop();
+          meta.get(adjacentNodeId).onStack = false;
+          scc.push(adjacentNodeId);
+        } while (nodeId !== adjacentNodeId);
 
-    graph.edges.get(node).forEach(function(w) {
-      if (w === startNode) {
-        found = true;
-        addCircuit(startNode, stack);
-      } else if (!blocked.get(w)) {
-        if (circuit(w)) {
-          found = true;
-        }
+        result.push(scc.map(nodeId => this.nodes.get(nodeId)));
+      }
+    }.bind(this);
+
+    this.nodes.forEach(node => {
+      let nodeId = node[this.nodeKey];
+      if (!meta.has(nodeId)) {
+        connect(node);
       }
     });
 
-    if (found) {
-      unblock(node);
-    } else {
-      graph.edges.get(node).forEach(function(w) {
-        var entry = b.get(w);
+    return result;
+  };
 
-        if (!entry) {
-          entry = new Set();
-          b.set(w, entry);
+  findCycles() {
+    let A = new Map();
+    let B = new Map();
+    let blocked = new Map();
+    let stack = [];
+    let cycles = [];
+    let s = 0;
+
+    let unblock = function(u) {
+      blocked.set(u, false);
+      if(B.has(u)) {
+        let Bu = B.get(u);
+        Bu.forEach(w => {
+          Bu.delete(w);
+          if (blocked.get(w)) {
+            unblock(w);
+          }
+        });
+      }
+    }.bind(this);
+
+    let circuit = function(v) {
+      let f = false;
+      stack.push(v);
+      blocked.set(v, true);
+      if(A.has(v)) {
+        A.get(v).forEach(w => {
+          if (w === s) {
+            console.log('Found cycle', s, stack);
+            cycles.push(stack.map(nodeId => this.nodes.get(nodeId)));
+            f = true;
+          } else {
+            if(!blocked.has(w) || !blocked.get(w)) {
+              if(circuit(w))
+                f = true;
+            }
+          }
+        });
+
+        if(f) {
+          unblock(v);
+        } else {
+          A.get(v).forEach(w => {
+            let entry = B.get(w);
+            if (!entry) {
+              entry = new Set();
+              B.set(w, entry);
+            }
+            entry.add(w);
+          });
         }
+      }
+      stack.pop();
+      return f;
+    }.bind(this);
 
-        entry.add(node);
+    this.edges.forEach((targets, source) => {
+      let entry = A.get(source);
+      if(!entry) {
+        entry = new Set();
+        A.set(source, entry);
+      }
+
+      targets.forEach(target => {
+        entry.add(target.target);
       });
-    }
+    });
 
-    stack.pop();
-    return found;
-  }
+    A.forEach((adjacentSet, vertex) => {
+      s = vertex;
 
-  graph.nodes.forEach(function(node) {
-    startNode = node;
-    graph.edges.get(node).forEach(circuit);
-  });
+      A.forEach((adj, i) => {
+        blocked.set(i, false);
+        B.set(i, new Set());
+      });
 
-  return circuits;
-};
+      circuit(s);
+    });
 
+    return cycles;
+  };
+}
 
 export default Graph;

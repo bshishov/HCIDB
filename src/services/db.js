@@ -104,7 +104,7 @@ export default {
           description
           affects { from_id to_id }
           depends { from_id to_id }
-          references { classifier { type_id content }}
+          references { classifier { type_id content type { required }}}
         }}`;
     return this.query(featureNameSearch, {q: '%' + query + '%', limit});
   },

@@ -40,7 +40,7 @@ ru:
               {{ item.name }}
             </router-link>
             <div class="small subheader">
-              <span v-for="ref in item.references" v-if="showRef(ref)" class="classifier">
+              <span v-for="ref in item.references" v-if="ref.classifier.type.required" class="classifier">
                 {{ ref.classifier.content }}
               </span>
             </div>
@@ -62,7 +62,7 @@ ru:
   import AuthPanel from './components/AuthPanel';
   import NotificationsContainer from "@/components/NotificationsContainer";
   import Dropdown from "@/components/Dropdown";
-  import db from '@/services/db';
+  import {Feature} from "@/services/model";
   import { mapActions, mapGetters } from 'vuex';
   import {debounce} from "@/utils";
   import FeatureTooltip from "@/components/FeatureTooltip";
@@ -88,8 +88,11 @@ ru:
 
         console.log('Search changed', newQuery);
         this.isSearchLoading = true;
-        db.searchFeatures(newQuery)
-          .then(r => { this.searchItems = r.features; })
+        Feature.search(newQuery)
+          .then(features => {
+            console.log(features);
+            this.searchItems = features;
+          })
           .catch(this.dbError)
           .finally(() => { this.isSearchLoading = false; });
       }, 300)
@@ -107,15 +110,6 @@ ru:
       onSearchInput(value) {
         if(!(typeof value === 'string' || value instanceof String))
           this.$refs.search.clear();
-      },
-      showRef(reference) {
-        if (!reference)
-          return false;
-
-        if (![1, 2].includes(reference.classifier.type_id))
-          return false;
-
-        return true;
       }
     }
   }

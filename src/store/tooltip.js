@@ -1,8 +1,8 @@
-import db from '@/services/db';
+import {Feature} from "@/services/model"
 
 // Mutations
 const SET_FEATURE = 'SET_FEATURE';
-const UNSET_FEATURE = 'UNSET_FEATURE';
+const HIDE = 'HIDE';
 const LOADING_STARTED = 'LOADING_STARTED';
 const LOADING_ENDED = 'LOADING_ENDED';
 const SHOW = 'SHOW';
@@ -11,13 +11,7 @@ const state = {
   isLoading: false,
   isShowing: false,
   hideRequested: false,
-  feature: {
-    id: -1,
-    name: "",
-    description: "",
-    descriptionHtml: "",
-    classifiers: []
-  }
+  feature: {}
 };
 
 const getters = {
@@ -45,16 +39,14 @@ const mutations = {
     }
   },
   [SET_FEATURE](state, feature) {
+    state.feature = feature;
     state.isShowing = true;
-    state.feature.name = feature.name;
     state.description = feature.description;
-    state.feature.id = feature.id;
-    state.feature.classifiers = feature.references.map(el => el.classifier);
   },
   [SHOW](state) {
     state.isShowing = true;
   },
-  [UNSET_FEATURE](state) {
+  [HIDE](state) {
     if(state.isLoading) {
       state.hideRequested = true;
     } else {
@@ -71,14 +63,14 @@ const actions = {
     }
 
     commit(LOADING_STARTED);
-    db.getFeature(featureId).then(feature => {
+    Feature.getById(featureId).then(feature => {
       commit(SET_FEATURE, feature);
     }).finally(() => {
       commit(LOADING_ENDED);
     });
   },
   hideFeature({commit}) {
-    commit(UNSET_FEATURE);
+    commit(HIDE);
   }
 };
 

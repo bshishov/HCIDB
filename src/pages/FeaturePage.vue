@@ -106,6 +106,7 @@
   import Block from "@/components/Block";
   import {debounce} from "@/utils";
   import Icon from "@/components/Icon";
+  import {Feature} from "@/services/model"
 
   export default {
     name: "FeaturePage",

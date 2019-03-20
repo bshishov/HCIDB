@@ -18,16 +18,57 @@
 <script>
   import { mapActions, mapGetters } from 'vuex'
   import References from "@/components/References";
+
+  const paddingLeft = 10;
+  const paddingTop = 10;
+
   export default {
     name: "FeatureTooltip",
     components: {References},
+    data() {
+      return {
+        mousePageX: 0,
+        mousePageY: 0,
+        mouseClientY: 0,
+        mouseClientX: 0,
+      }
+    },
     mounted() {
-      document.addEventListener('mousemove', e => {
-        if(!!this.$refs.tooltip) {
-          this.$refs.tooltip.style.top = e.pageY + 10 + 'px';
-          this.$refs.tooltip.style.left = e.pageX + 10 + 'px';
-        }
+      document.addEventListener('mousemove', (e) => {
+        this.mouseClientX = e.clientX;
+        this.mouseClientY = e.clientY;
+        this.mousePageX = e.pageX;
+        this.mousePageY = e.pageY;
+        this.updatePosition();
       }, false);
+    },
+    watch: {
+      feature() {
+        this.updatePosition();
+      }
+    },
+    methods: {
+      updatePosition() {
+        if(!!this.$refs.tooltip) {
+          let h = this.$refs.tooltip.clientHeight;
+          let w = this.$refs.tooltip.clientHeight;
+          let distanceToBottom = window.innerHeight - this.mouseClientY;
+          let distanceToRight = window.innerWidth - this.mouseClientX;
+          this.$refs.tooltip.style.left = this.mousePageX + paddingLeft + 'px';
+
+          if (distanceToRight < w) {
+            this.$refs.tooltip.style.left = this.mousePageX - w + 'px';
+          } else {
+            this.$refs.tooltip.style.left = this.mousePageX + paddingLeft + 'px';
+          }
+
+          if(distanceToBottom < h) {
+            this.$refs.tooltip.style.top = this.mousePageY - h + distanceToBottom - paddingTop + 'px';
+          } else {
+            this.$refs.tooltip.style.top = this.mousePageY + paddingTop + 'px';
+          }
+        }
+      }
     },
     computed: {
       ...mapGetters({
