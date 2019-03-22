@@ -188,6 +188,47 @@ class Graph {
 
     return cycles;
   };
+
+  searchPaths(fromId, toId) {
+    // todo: https://efficientcodeblog.wordpress.com/2018/02/15/finding-all-paths-between-two-nodes-in-a-graph/
+    console.log('Searching');
+    let closed = new Set();
+    let fringe = [{id: fromId, parent: null}];
+    let paths = [];
+    let unwrap = function (node) {
+      let n = node;
+      let path = [];
+      while (n.parent != null){
+        path.unshift(this.nodes.get(n.id));
+        n = n.parent;
+      }
+      return path;
+    }.bind(this);
+
+    while (true) {
+      if (fringe.length === 0)
+        break;
+      let node = fringe.pop();
+
+      if (node.id === toId) {
+        paths.push(unwrap(node));
+      } else {
+        if (!closed.has(node.id)) {
+          closed.add(node.id);
+          if (this.edges.has(node.id)) {
+            this.edges.get(node.id).forEach(edge => {
+              fringe.push({
+                id: edge[this.targetNodeKey],
+                parent: node
+              });
+            });
+          }
+        }
+      }
+    }
+
+    return paths;
+  }
 }
 
 export default Graph;
