@@ -17,6 +17,7 @@ pipeline {
 		stage('Build') {			
 			steps {
 				sh 'npm install --progress=false'
+				sh 'npm rebuild node-sass'
 				sh 'npm run build'
 			}
 		}
