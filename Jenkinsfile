@@ -5,7 +5,8 @@ library identifier: 'JenkinsShared@master', retriever: modernSCM([
 
 pipeline {
 	agent {
-		docker { image 'node:7-alpine'}
+		label 'master'
+		docker { image 'node:7-alpine' }
 	}
 	environment {
 		NAME = 'hcidb'
