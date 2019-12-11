@@ -6,8 +6,8 @@ library identifier: 'JenkinsShared@master', retriever: modernSCM([
 pipeline {
 	agent {		
 		docker { 
-			image 'node:7-alpine' 
-			label 'master'
+			image 'node:8-alpine' 
+			label 'master'  // Jenkins node to run this build on
 		}
 	}
 	environment {
