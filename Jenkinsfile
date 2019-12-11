@@ -26,7 +26,8 @@ pipeline {
 				NEXUS_URL = 'https://nexus.shishov.me'
 			}
 			steps {
-				sh "tar czvf ${env.BUILD_FILENAME} -C ./dist ."				
+				sh "tar czvf ${env.BUILD_FILENAME} -C ./dist ."	
+				sh "apk --no-cache add curl"
 				uploadToNexus3(
 					filename: env.BUILD_FILENAME, 
 					nexusUrl: env.NEXUS_URL,
