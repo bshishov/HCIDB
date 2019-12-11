@@ -6,7 +6,7 @@ library identifier: 'JenkinsShared@master', retriever: modernSCM([
 pipeline {
 	agent {
 		docker {
-			image 'node:8-alpine' 
+			image 'node:8-jessie-slim' 
 			label 'master'  // Jenkins node to run this build on
 		}
 	}
@@ -26,8 +26,7 @@ pipeline {
 				NEXUS_URL = 'https://nexus.shishov.me'
 			}
 			steps {
-				sh "tar czvf ${env.BUILD_FILENAME} -C ./dist ."	
-				sh "apk --no-cache add curl"
+				sh "tar czvf ${env.BUILD_FILENAME} -C ./dist ."					
 				uploadToNexus3(
 					filename: env.BUILD_FILENAME, 
 					nexusUrl: env.NEXUS_URL,
