@@ -22,15 +22,17 @@ pipeline {
 			}
 		}
 		stage('Publish to Nexus') {
+			agent { label 'master' }
 			environment {
 				BUILD_FILENAME = "${env.NAME}_${env.BRANCH_NAME}.zip"
-				NEXUS_URL = "https://nexus.shishov.me"
+				NEXUS_URL = 'https://nexus.shishov.me'
 			}
 			steps {
 				zipDirectory directory: "dist", file: env.BUILD_FILENAME
 				uploadToNexus3(
 					filename: env.BUILD_FILENAME, 
 					nexusUrl: env.NEXUS_URL,
+					repository: 'releases',
 					targetFilename: "${env.NAME}/${env.BUILD_FILENAME}",
 					credentialsId: 'nexus-publish')
 			}
