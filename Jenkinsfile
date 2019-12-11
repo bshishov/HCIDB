@@ -23,11 +23,11 @@ pipeline {
 		}
 		stage('Publish to Nexus') {			
 			environment {
-				BUILD_FILENAME = "${env.NAME}_${env.BRANCH_NAME}.tar.gz"
+				BUILD_FILENAME = "${env.NAME}_${env.BRANCH_NAME}.tar"
 				NEXUS_URL = 'https://nexus.shishov.me'
 			}
 			steps {
-				sh "tar czvf ${env.BUILD_FILENAME} -C ./dist ."					
+				sh "tar cvf ${env.BUILD_FILENAME} -C ./dist ."
 				uploadToNexus3(
 					filename: env.BUILD_FILENAME, 
 					nexusUrl: env.NEXUS_URL,
