@@ -4,18 +4,18 @@ library identifier: 'JenkinsShared@master', retriever: modernSCM([
 ])
 
 pipeline {
-	agent {		
-		docker { 
-			image 'node:8-alpine' 
-			label 'master'  // Jenkins node to run this build on
-		}
-	}
+	agent { label 'master' }
 	environment {
 		NAME = 'hcidb'
-		NEXUS_URL = "https://nexus.shishov.me"
 	}
 	stages {
-		stage('Build') {			
+		stage('Build') {
+			agent {		
+				docker { 
+					image 'node:8-alpine' 
+					label 'master'  // Jenkins node to run this build on
+				}
+			}
 			steps {
 				sh 'npm install --progress=false'
 				sh 'npm run build'
@@ -24,6 +24,7 @@ pipeline {
 		stage('Publish to Nexus') {
 			environment {
 				BUILD_FILENAME = "${env.NAME}_${env.BRANCH_NAME}.zip"
+				NEXUS_URL = "https://nexus.shishov.me"
 			}
 			steps {
 				zipDirectory directory: "dist", file: env.BUILD_FILENAME
