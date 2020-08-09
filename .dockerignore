@@ -1,0 +1,9 @@
+# Ignore everything
+**
+
+# Allow files and directories
+!/package*.json
+!/build/**
+!/config/**
+!/static/**
+!/src/**
