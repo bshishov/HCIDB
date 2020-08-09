@@ -7,6 +7,7 @@
 !/.postcssrc.js
 !/.babelrc
 
+# Directories
 !/build/**
 !/config/**
 !/static/**
