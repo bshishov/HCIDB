@@ -12,7 +12,7 @@
   "dependencies": {
     "auth0-js": "^9.10.0",
     "base64url": "^3.0.1",
-    "d3": "^5.9.1",
+    "d3": "^7.6.1",
     "eventemitter3": "^3.1.0",
     "katex": "^0.10.1",
     "marked": "^0.6.1",
