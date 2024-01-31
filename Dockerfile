@@ -1,5 +1,5 @@
-FROM node:8-jessie-slim
-RUN npm install -g http-server
+FROM node:10
+RUN npm install -g http-server@0.12.3
 
 WORKDIR /app
 
